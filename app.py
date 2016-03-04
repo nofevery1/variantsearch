@@ -252,11 +252,10 @@ class index:
         web.header('Content-Type', 'application/json')
         web.header('Access-Control-Allow-Origin', '*')
         web.header('Access-Control-Allow-Credentials', 'true')
-        data = web.input(rsid="None",proteinPosition="None",gene="None",timer="Leave this blank")
+        data = web.input(rsid="None",proteinPosition="None",gene="None",timer="leave")
         timer = str(data.timer)
-        if (re.match("Leave this blank",timer)):
-            return "Sorry, an error occurred"
-        elif (re.match("5a610af2",timer)):
+        print timer
+        if (re.match("5a610af2",timer)):
             rsid = str(data.rsid)
             protPos = str(data.proteinPosition)
             gene = str(data.gene)
