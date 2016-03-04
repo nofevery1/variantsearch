@@ -10,7 +10,7 @@ $(document).bind("ajaxSend", function(){
 
 
 $( "#variantData" ).submit(function( event ) {
-  if ( $( "#gene" ).val().length === 0 ) {
+  if ( $("#rsid").val().length === 0 && $( "#gene" ).val().length === 0 ) {
     $( ".required" ).addClass("has-error");
     event.preventDefault();
   } else {
