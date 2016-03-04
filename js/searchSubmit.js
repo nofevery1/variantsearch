@@ -21,7 +21,8 @@ $( "#variantData" ).submit(function( event ) {
       data: {
         gene: $("input#gene").val(),
         rsid: $("input#rsid").val(),
-        proteinPosition: $("input#proteinPosition").val()
+        proteinPosition: $("input#proteinPosition").val(),
+        timer: $("input#timer").val()
       },
       type: "GET",
       dataType : "json",
