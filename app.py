@@ -122,13 +122,16 @@ def clinVar(rsid,gene,oneChar):
     elif oneChar[0] is None:
         protList = []
 
-
+    print oneChar[0],len(rsidList),len(protList)
     if len(rsidList) > 0 and len(protList) > 0:
         uniqueClin = set(rsidList + protList)
     if len(rsidList) > 0 and len(protList) == 0:
         uniqueClin = rsidList
     if len(rsidList) == 0 and len(protList) > 0:
         uniqueClin = protList
+    if len(rsidList) == 0 and len(protList) == 0:
+        uniqueClin = protList
+
 
 
     uniqueStr = ','.join(uniqueClin)
@@ -181,37 +184,41 @@ def search(gene,rsid,protQueries):
     #get abstracts and such
     uniquesGrab = ','.join(uniques)
     print uniquesGrab
-    handle = Entrez.efetch(db="pubmed", id=uniquesGrab, retmode='xml',rettype='abstract')
-    record = Entrez.read(handle)
-    searchOut = []
-    for article in record:
-        title = article['MedlineCitation']['Article']['ArticleTitle']
-        pmidEl = article['MedlineCitation']['PMID']
-        print pmidEl
-        try:
-            abstract = article['MedlineCitation']['Article']['Abstract']['AbstractText'][0]
-        except:
-            abstract = "Abstract not available."
-        PMaddress = "http://www.ncbi.nlm.nih.gov/pubmed/"+str(pmidEl)
-        searchOut.append({"pmid":pmidEl,"title":title,"abstract":abstract,"address":PMaddress})
+    if len(uniquesGrab) > 0:
+        handle = Entrez.efetch(db="pubmed", id=uniquesGrab, retmode='xml',rettype='abstract')
+        record = Entrez.read(handle)
+        searchOut = []
+        for article in record:
+            title = article['MedlineCitation']['Article']['ArticleTitle']
+            pmidEl = article['MedlineCitation']['PMID']
+            print pmidEl
+            try:
+                abstract = article['MedlineCitation']['Article']['Abstract']['AbstractText'][0]
+            except:
+                abstract = "Abstract not available."
+            PMaddress = "http://www.ncbi.nlm.nih.gov/pubmed/"+str(pmidEl)
+            searchOut.append({"pmid":pmidEl,"title":title,"abstract":abstract,"address":PMaddress})
+        return searchOut
+    elif len(uniquesGrab) == 0:
+        searchOut = []
+        return searchOut
 
-    return searchOut
 
 
 
 
 def main(rsid,protein,gene):
 
-    if len(rsid) < 1 and len(protein) < 1 :
-        return "No results."
-        #sys.exit(2)
     if rsid is None and protein is None:
         return "No results. Either rsid or protein change is required."
         #sys.exit(2)
-    if len(gene) < 1 :
-        return "Gene required. No results."
+
+    elif rsid is not None and protein is not None:
+        if len(rsid) < 1 and len(protein) < 1 :
+            return "No results."
+        if len(gene) < 1 :
+            return "Gene required. No results."
         #sys.exit(2)
-    if rsid is not None and protein is not None:
         if len(rsid) < 1:
             rsid = None
         if len(protein) < 1:
