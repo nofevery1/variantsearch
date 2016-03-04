@@ -216,8 +216,8 @@ def main(rsid,protein,gene):
     elif rsid is not None and protein is not None:
         if len(rsid) < 1 and len(protein) < 1 :
             return "No results."
-        if len(gene) < 1 :
-            return "Gene required. No results."
+        #if len(gene) < 1 :
+        #    return "Gene required. No results."
         #sys.exit(2)
         if len(rsid) < 1:
             rsid = None
@@ -260,8 +260,8 @@ class index:
             rsid = None
         if re.match('None',protPos):
             protPos = None
-        if re.match('None',gene):
-            return "No results. Gene name is required"
+        #if re.match('None',gene):
+        #    return "No results. Gene name is required"
         output = main(rsid,protPos,gene)
         print output
         #main(sys.argv[1:])
