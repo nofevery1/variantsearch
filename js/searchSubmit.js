@@ -13,8 +13,14 @@ $( "#variantData" ).submit(function( event ) {
   if ( $("#rsid").val().length === 0 && $( "#gene" ).val().length === 0 ) {
     $( ".required" ).addClass("has-error");
     event.preventDefault();
+  }
+  else if ( $("#rsid").val().length === 0 && $( "#proteinPosition").val().length ===0 ) {
+    $( ".required" ).addClass("has-error");
+    event.preventDefault();
   } else {
     console.log($("input#gene").val())
+    console.log($("input#rsid").val())
+    console.log($("input#proteinPosition").val())
     $( "#variantData" ).hide();
     $.ajax({
       url: "http://0.0.0.0:8080",

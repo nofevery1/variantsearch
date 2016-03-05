@@ -98,31 +98,46 @@ def altNames(protein):
 
 def clinVar(rsid,gene,oneChar):
 
-    print "ClinVar_____",rsid,"_____",oneChar,"_____",gene
+    #print "ClinVar_____",rsid,"_____",oneChar,"_____",gene
 
 
-    if rsid is not None:
-        handle = Entrez.esearch(db="clinvar",term=rsid+" AND "+gene+"[Gene]",retmax=20)
+    if rsid is not None and gene is not None:
+        handle = Entrez.esearch(db="clinvar",term=rsid+" AND "+gene+"[Gene]",retmax=200)
+        record = Entrez.read(handle)
+        rsidList = record["IdList"]
+    elif rsid is not None and gene is None:
+        handle = Entrez.esearch(db="clinvar",term=rsid,retmax=200)
         record = Entrez.read(handle)
         rsidList = record["IdList"]
     elif rsid is None:
         rsidList = []
 
-    if oneChar[0] is not None:
+    if oneChar[0] is not None and gene is not None:
         protList = []
         if len(oneChar) == 1:
-            handle = Entrez.esearch(db="clinvar", term=oneChar[0]+" AND "+gene+"[Gene]",retmax=20)
+            handle = Entrez.esearch(db="clinvar", term=oneChar[0]+" AND "+gene+"[Gene]",retmax=200)
             record = Entrez.read(handle)
             protList = record["IdList"]
         elif len(oneChar) ==2:
             for symbol in oneChar:
-                handle = Entrez.esearch(db="clinvar", term=symbol+" AND "+gene+"[Gene]",retmax=20)
+                handle = Entrez.esearch(db="clinvar", term=symbol+" AND "+gene+"[Gene]",retmax=200)
+                record = Entrez.read(handle)
+                protList.extend(record["IdList"])
+    elif oneChar[0] is not None and gene is None:
+        protList = []
+        if len(oneChar) == 1:
+            handle = Entrez.esearch(db="clinvar", term=oneChar[0],retmax=200)
+            record = Entrez.read(handle)
+            protList = record["IdList"]
+        elif len(oneChar) ==2:
+            for symbol in oneChar:
+                handle = Entrez.esearch(db="clinvar", term=symbol,retmax=200)
                 record = Entrez.read(handle)
                 protList.extend(record["IdList"])
     elif oneChar[0] is None:
         protList = []
 
-    print oneChar[0],len(rsidList),len(protList)
+    #print oneChar[0],len(rsidList),len(protList)
     if len(rsidList) > 0 and len(protList) > 0:
         uniqueClin = set(rsidList + protList)
     if len(rsidList) > 0 and len(protList) == 0:
@@ -135,11 +150,11 @@ def clinVar(rsid,gene,oneChar):
 
 
     uniqueStr = ','.join(uniqueClin)
-    print "ClinVar_____",uniqueStr
+    #print "ClinVar_____",uniqueStr
 #    record = Entrez.read(Entrez.elink(dbfrom="clinvar",db="pubmed",id=pmid))
 
     if len(uniqueClin) > 0:
-        handle = Entrez.elink(dbfrom="clinvar",db="pubmed",id=uniqueStr,retmax=20)
+        handle = Entrez.elink(dbfrom="clinvar",db="pubmed",id=uniqueStr,retmax=200)
         record = Entrez.read(handle)
         clinOut = []
         setUp = record[0]["LinkSetDb"][0]["Link"]
@@ -152,24 +167,34 @@ def clinVar(rsid,gene,oneChar):
 
 def search(gene,rsid,protQueries):
     print gene," ",rsid," ",protQueries
-    if (rsid is not None):
-        handle = Entrez.esearch(db="pubmed", term=rsid+" AND "+gene+"[Gene]", retmax=20)
+    if (rsid is not None and gene is not None):
+        handle = Entrez.esearch(db="pubmed", term=rsid+" AND "+gene+"[Gene]", retmax=200)
+        record = Entrez.read(handle)
+        rsidList = record["IdList"]
+    elif (rsid is not None and gene is None):
+        handle = Entrez.esearch(db="pubmed", term=rsid, retmax=200)
         record = Entrez.read(handle)
         rsidList = record["IdList"]
     elif rsid is None:
         rsidList = []
-    print rsidList
+    #print rsidList
     #protein search
-    if (protQueries[0] is not None):
+    if (protQueries[0] is not None and gene is not None):
         protList = []
         for prot in protQueries:
-            handle = Entrez.esearch(db="pubmed", term=prot+" AND "+gene+"[Gene]", retmax=20)
+            handle = Entrez.esearch(db="pubmed", term=prot+" AND "+gene+"[Gene]", retmax=200)
+            record = Entrez.read(handle)
+            protList.extend(record["IdList"])
+    elif (protQueries[0] is not None and gene is None):
+        protList = []
+        for prot in protQueries:
+            handle = Entrez.esearch(db="pubmed", term=prot, retmax=200)
             record = Entrez.read(handle)
             protList.extend(record["IdList"])
     elif (protQueries[0] is None):
         protList = []
 
-    print protList
+    #print protList
 
 
     if len(protQueries) > 2:
@@ -191,7 +216,7 @@ def search(gene,rsid,protQueries):
         for article in record:
             title = article['MedlineCitation']['Article']['ArticleTitle']
             pmidEl = article['MedlineCitation']['PMID']
-            print pmidEl
+            #print pmidEl
             try:
                 abstract = article['MedlineCitation']['Article']['Abstract']['AbstractText'][0]
             except:
@@ -244,7 +269,7 @@ def main(rsid,protein,gene):
     #    searchDict = mongo.paperPull(protDb,gene,rsid)
 
     #for key,value in searchDict
-    print json.dumps(searchDict)
+    #print json.dumps(searchDict)
     return searchDict
 
 class index:
@@ -252,18 +277,26 @@ class index:
         web.header('Content-Type', 'application/json')
         web.header('Access-Control-Allow-Origin', '*')
         web.header('Access-Control-Allow-Credentials', 'true')
-        data = web.input(rsid="None",proteinPosition="None",gene="None")
-        rsid = str(data.rsid)
-        protPos = str(data.proteinPosition)
-        gene = str(data.gene)
-        if re.match('None',rsid):
+        data = web.input(rsid=None,proteinPosition=None,gene=None)
+        print data.gene,data.proteinPosition,data.rsid,"retarded"
+        if len(data.rsid) == 0:
             rsid = None
-        if re.match('None',protPos):
+        elif len(data.rsid) > 0:
+            rsid = data.rsid
+
+        if len(data.proteinPosition) == 0:
             protPos = None
-        #if re.match('None',gene):
-        #    return "No results. Gene name is required"
+        elif len(data.proteinPosition) > 0:
+            protPos = data.proteinPosition
+
+        if len(data.gene) == 0:
+            gene = None
+        elif len(data.gene) > 0:
+            gene = data.gene
+
+        print gene,protPos,rsid
         output = main(rsid,protPos,gene)
-        print output
+        print json.dumps(output)
         #main(sys.argv[1:])
         return json.dumps(output)
 

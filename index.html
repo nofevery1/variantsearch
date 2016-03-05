@@ -41,17 +41,17 @@
           <p class="lead">Loading papers...</p>
         </div>
         <form id="variantData">
-          <div class="form-group">
+          <div class="form-group required">
             <label class="sr-only" for="rsid">rsid</label>
             <input type="text" class="form-control" id="rsid" placeholder="rsid (e.g. rs267606722)" name="rsid">
           </div>
-          <div class="form-group">
+          <div class="form-group required">
             <label class="sr-only" for="proteinPosition">proteinPosition</label>
             <input type="text" class="form-control" id="proteinPosition" placeholder="Protein change (e.g. W846X)" name="proteinPosition">
           </div>
-          <div class="form-group required">
+          <div class="form-group optional">
             <label class="sr-only" for="gene">gene</label>
-            <input type="text" class="form-control" id="gene" placeholder="Gene name (use HGNC!)" name="gene">
+            <input type="text" class="form-control" id="gene" placeholder="Gene name (e.g. CFTR)" name="gene">
           </div>
           <button type="submit" class="btn btn-default">Search</button>
         </form>
