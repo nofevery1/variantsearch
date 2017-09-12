@@ -7,7 +7,7 @@ import re
 
 
 #open mongo client
-client = MongoClient("mongodb://gareth:NofVsearch@candidate.12.mongolayer.com:10855,candidate.13.mongolayer.com:10885/vsearch?replicaSet=set-555cd20df5bb5d1e29000243")
+client = MongoClient("<add client address here>")
 db = client['vsearch']
 coll = db['variants']
 updateFlag = None
