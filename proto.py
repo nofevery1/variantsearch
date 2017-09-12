@@ -9,7 +9,7 @@ from Bio import Entrez
 
 
 #assign eutils email
-Entrez.email = "gareth862@gmail.com"
+Entrez.email = "<email>"
 
 
 #return list of protein alternate names
